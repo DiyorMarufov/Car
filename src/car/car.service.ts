@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateCarDto } from './dto/create-car.dto';
 import { UpdateCarDto } from './dto/update-car.dto';
 import { catchError } from 'src/lib/not-found';
@@ -24,18 +28,59 @@ export class CarService {
   }
 
   async findAll() {
-    return `This action returns all car`;
+    try {
+      const cars = await this.carRepo.find();
+      return successRes(cars);
+    } catch (error) {
+      return catchError(error);
+    }
   }
 
   async findOne(id: number) {
-    return `This action returns a #${id} car`;
+    try {
+      const car = await this.carRepo.findOne({ where: { id } });
+
+      if (!car) {
+        throw new NotFoundException(`Car with ID ${id} not found`);
+      }
+
+      return successRes(car);
+    } catch (error) {
+      return catchError(error);
+    }
   }
 
   async update(id: number, updateCarDto: UpdateCarDto) {
-    return `This action updates a #${id} car`;
+    try {
+      const car = await this.carRepo.findOne({ where: { id } });
+      if (!car) {
+        throw new NotFoundException(`Car with ID ${id} not found`);
+      }
+
+      const { affected } = await this.carRepo.update(id, updateCarDto);
+      if (!affected) {
+        throw new BadRequestException(`Car with ID ${id} not updated`);
+      }
+
+      const updatedCar = await this.carRepo.findOne({ where: { id } });
+      return successRes(updatedCar);
+    } catch (error) {
+      return catchError(error);
+    }
   }
 
   async remove(id: number) {
-    return `This action removes a #${id} car`;
+    try {
+      const car = await this.carRepo.findOne({ where: { id } });
+
+      if (!car) {
+        throw new NotFoundException(`Car with ID ${id} not found`);
+      }
+
+      await this.carRepo.delete(id);
+      return successRes();
+    } catch (error) {
+      return catchError(error);
+    }
   }
 }

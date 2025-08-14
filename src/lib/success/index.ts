@@ -1,5 +1,5 @@
 export const successRes = (
-  data: any,
+  data: any = {},
   statusCode: number = 200,
   message: string = 'success',
 ) => {
