@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString, Min } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString, Length, Min } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateCarDto {
@@ -7,7 +7,7 @@ export class CreateCarDto {
     example: 'Malibu',
     minLength: 2,
   })
-  @Min(2)
+  @Length(2, 50)
   @IsString()
   @IsNotEmpty()
   name: string;
