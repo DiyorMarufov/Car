@@ -2,11 +2,20 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import config from './config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { HttpStatus, ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const PORT = config.PORT;
 
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+    }),
+  );
+  app.enableCors();
   const configSwagger = new DocumentBuilder()
     .setTitle('Cats example')
     .setDescription('The cats API description')
