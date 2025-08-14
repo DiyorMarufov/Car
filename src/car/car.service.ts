@@ -31,7 +31,7 @@ export class CarService {
     try {
       const cars = await this.carRepo.find({
         order: {
-          createdAt: 'desc',
+          createdAt: 'asc',
         },
       });
       return successRes(cars);
