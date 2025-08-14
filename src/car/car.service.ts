@@ -29,7 +29,11 @@ export class CarService {
 
   async findAll() {
     try {
-      const cars = await this.carRepo.find();
+      const cars = await this.carRepo.find({
+        order: {
+          createdAt: 'desc',
+        },
+      });
       return successRes(cars);
     } catch (error) {
       return catchError(error);
